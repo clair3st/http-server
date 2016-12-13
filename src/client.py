@@ -1,13 +1,13 @@
 """Client side of server."""
 
-
+from __future__ import unicode_literals
 import socket
 from sys import argv
 
 
 def client(message):
     """Setup client side."""
-    infos = socket.getaddrinfo('127.0.0.1', 5003)
+    infos = socket.getaddrinfo('127.0.0.1', 5016)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
 
     client = socket.socket(*stream_info[:3])
@@ -27,7 +27,8 @@ def client(message):
         result += part.decode('utf8')
 
     client.close()
-    print(result)
+    print(result[:-2])
+    return result[:-2]
 
 
 def main():
