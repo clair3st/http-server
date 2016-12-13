@@ -13,24 +13,31 @@ def server():
     )
     address = ('127.0.0.1', 5003)
     server.bind(address)
+
     server.listen(1)
     print("Listening...")
-    try:
-        while True:
+
+    while True:
+        try:
             conn, addr = server.accept()
             buffer_length = 8
-            message_complete = False
-            while not message_complete:
+            response = u''
+
+            while response[-2:] != u"\r\n":
                 part = conn.recv(buffer_length)
-                print(part.decode('utf8'))
-                if len(part) < buffer_length:
-                    message_complete = True
-            message = "I hear you, loud and clear!"
+                response += part.decode('utf8')
+                print('Recieved: ', part)
+
             print("Message sent...")
-            conn.sendall(message.encode('utf8'))
+            conn.sendall(response.encode('utf8'))
             conn.close()
-    except KeyboardInterrupt:
-        server.close()
+
+        except KeyboardInterrupt:
+            print('\nClosing echo server...')
+            break
+
+    server.close()
+    conn.close()
 
 
 if __name__ == '__main__':
