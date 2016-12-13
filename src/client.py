@@ -1,8 +1,7 @@
 """Client side of server."""
 
-from __future__ import unicode_literals
 import socket
-from sys import argv
+from sys import argv, version_info
 
 
 def client(message):
@@ -15,6 +14,11 @@ def client(message):
     print("Connecting...")
 
     message += '\r\n'
+
+    if version_info[0] == 2:
+        print('python 2')
+        message = message.decode("utf8")
+
     print("Sending: ", message.encode('utf8'))
     client.sendall(message.encode('utf8'))
 
