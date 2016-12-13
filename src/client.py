@@ -14,20 +14,22 @@ from sys import argv
 
 def client(message):
     """Setup client side."""
-    from server import server
-    server()
-    infos = socket.getaddrinfo('127.0.0.1', 5000)
+    infos = socket.getaddrinfo('127.0.0.1', 5003)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
     client = socket.socket(*stream_info[:3])
     client.connect(stream_info[-1])
+    print("Connecting...")
     client.sendall(message.encode('utf8'))
     buffer_length = 8
     reply_complete = False
     while not reply_complete:
+        result = ""
         part = client.recv(buffer_length)
-        print(part.decode('utf8'))
+        result += part.decode('utf8')
+        print(result)
         if len(part) < buffer_length:
-            break
+            reply_complete = True
+    client.close()
 
 
 def main():
