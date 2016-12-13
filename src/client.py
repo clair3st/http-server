@@ -4,13 +4,6 @@
 import socket
 from sys import argv
 
-# def get_constants(prefix):
-#    """mapping of socket module constants to their names"""
-#     return {getattr(socket, n): n
-#     for n in dir(socket)
-#     if n.startswith(prefix)
-# }
-
 
 def client(message):
     """Setup client side."""
