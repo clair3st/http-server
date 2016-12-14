@@ -33,3 +33,9 @@ def test_response_ok():
     """Test good connection message from server returns correct string."""
     from server import response_ok
     assert response_ok() == 'HTTP/1.1 200 OK\n\r\n'
+
+
+def test_response_error():
+    """Test 500 error message from server returns correct string."""
+    from server import response_error
+    assert response_error() == 'HTTP/1.1 500 Internal Server Error\n\r\n'
