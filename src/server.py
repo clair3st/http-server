@@ -59,6 +59,7 @@ def response_error():
     message = 'HTTP/1.1 500 Internal Server Error\n'
     if version_info[0] == 2:
         message = message.decode('utf-8')
+    message += u"\r\n"
     return message
 
 
