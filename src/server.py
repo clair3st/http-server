@@ -30,7 +30,7 @@ def server():
                 client_request += part.decode('utf8')
 
             print(client_request)
-            conn.sendall(server_good_connection().encode('utf8'))
+            conn.sendall(response_ok().encode('utf8'))
             conn.sendall(client_request.encode('utf8'))
             conn, addr = server.accept()
 
@@ -40,12 +40,12 @@ def server():
 
         # except StandardError:
         #     conn.sendall(server_bad_connection().encode('utf8'))
-        #     break    
+        #     break
     conn.close()
     server.close()
 
 
-def server_good_connection():
+def response_ok():
     """Send a HTTP response to client."""
     message = 'HTTP/1.1 200 OK\n'
     if version_info[0] == 2:
@@ -54,7 +54,7 @@ def server_good_connection():
     return message
 
 
-def server_bad_connection():
+def response_error():
     """Send a HTTP response to client if bad request."""
     message = 'HTTP/1.1 500 Internal Server Error\n'
     if version_info[0] == 2:
