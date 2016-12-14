@@ -24,24 +24,23 @@ def server():
     while True:
         try:
             buffer_length = 8
-            response = u''
-            while response[-2:] != u"\r\n":
+            client_request = u''
+            while client_request[-2:] != u"\r\n":
                 part = conn.recv(buffer_length)
-                response += part.decode('utf8')
-                print('Recieved: ', part)
+                client_request += part.decode('utf8')
 
-            print("Message sent...")
+            print(client_request)
             conn.sendall(server_good_connection().encode('utf8'))
-            conn.sendall(response.encode('utf8'))
+            conn.sendall(client_request.encode('utf8'))
             conn, addr = server.accept()
 
         except KeyboardInterrupt:
             print('\nClosing echo server...')
             break
 
-        except StandardError:
-            conn.sendall(server_bad_connection().encode('utf8'))
-            break        
+        # except StandardError:
+        #     conn.sendall(server_bad_connection().encode('utf8'))
+        #     break    
     conn.close()
     server.close()
 
@@ -51,6 +50,7 @@ def server_good_connection():
     message = 'HTTP/1.1 200 OK\n'
     if version_info[0] == 2:
         message = message.decode('utf-8')
+    message += u"\r\n"
     return message
 
 
