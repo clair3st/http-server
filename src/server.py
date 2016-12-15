@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import socket
+from client import BUFFER_LENGTH, ADDRESS, PORT
 
 
 def server():
@@ -12,7 +13,7 @@ def server():
         socket.SOCK_STREAM,
         socket.IPPROTO_TCP
     )
-    address = ('127.0.0.1', 5016)
+    address = (ADDRESS, PORT)
     server.bind(address)
 
     server.listen(1)
@@ -22,10 +23,9 @@ def server():
 
     while True:
         try:
-            buffer_length = 8
             response = u''
             while response[-2:] != u"\r\n":
-                part = conn.recv(buffer_length)
+                part = conn.recv(BUFFER_LENGTH)
                 response += part.decode('utf8')
                 print('Recieved: ', part)
 
