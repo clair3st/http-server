@@ -12,7 +12,7 @@ Our server.py has two functions to forumulate these responses, which can be call
 
 
 #Testing Coverage:
-
+```
 ================ 2 passed in 0.03 seconds ===============
 
 ----- coverage: platform darwin, python 2.7.10-final-0 -----
@@ -35,4 +35,4 @@ src/server.py            40     25    38%   11-45, 52, 61, 67
 src/test_servers.py       8      0   100%
 ---------------------------------------------------
 TOTAL                    78     55    29%
-
+```
