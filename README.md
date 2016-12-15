@@ -16,11 +16,11 @@ Our server.py has three functions to forumulate these responses, which can be ca
 ---------- coverage: platform darwin, python 2.7.11-final-0 ----------
 Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
-src/client.py            30     30     0%   3-48
+src/client.py            30      6    80%   40-44, 48
 src/server.py            66     32    52%   12-53, 110
-src/test_servers.py      19      0   100%
+src/test_servers.py      23      0   100%
 ---------------------------------------------------
-TOTAL                   115     62    46%
+TOTAL                   119     38    68%
 
 
 ============================================= 11 passed in 0.07 seconds =
@@ -28,13 +28,12 @@ TOTAL                   115     62    46%
 
 
 ---------- coverage: platform darwin, python 3.5.2-final-0 -----------
+---------- coverage: platform darwin, python 3.5.2-final-0 -----------
 Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
-src/client.py            30     30     0%   3-48
+src/client.py            30      8    73%   19-20, 40-44, 48
 src/server.py            66     34    48%   12-53, 60, 77, 110
-src/test_servers.py      19      0   100%
+src/test_servers.py      23      0   100%
 ---------------------------------------------------
-TOTAL                   115     64    44%
-
-============================================= 11 passed in 0.08 seconds 
+TOTAL                   119     42    65%
 ```
