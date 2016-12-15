@@ -81,7 +81,7 @@ def response_error(exception):
 
 def parse_request(header):
     """Check header from client."""
-    """#TODO: What if there's a body after?"""
+    # TODO: What if there's a body after?
     header = header.split(' ', 4)
     print(header)
 
