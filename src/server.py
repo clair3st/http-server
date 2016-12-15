@@ -1,9 +1,10 @@
 """functions to build the server side of echo."""
 
-
 from __future__ import unicode_literals
 from sys import version_info
 import socket
+
+PORT_NUMBER = 5017
 
 
 def server():
@@ -13,7 +14,7 @@ def server():
         socket.SOCK_STREAM,
         socket.IPPROTO_TCP
     )
-    address = ('127.0.0.1', 5017)
+    address = ('127.0.0.1', PORT_NUMBER)
     server.bind(address)
 
     server.listen(1)
@@ -54,18 +55,38 @@ def response_ok():
     return message
 
 
-def response_error():
+def response_error(exception):
     """Send a HTTP response to client if bad request."""
-    message = 'HTTP/1.1 500 Internal Server Error\n'
-    if version_info[0] == 2:
-        message = message.decode('utf-8')
+    error_codes = {
+        '405': 'Method Not Allowed\n',
+        '400': 'Bad Request\n',
+        '505': 'HTTP Version Not Supported\n',
+        '500': 'Internal Server Error\n'
+    }
+    if exception in error_codes:
+        message = exception + ' ' + error_codes[exception]
+        if version_info[0] == 2:
+            message = message.decode('utf-8')
     message += u"\r\n"
     return message
 
 
 def parse_request(header):
     """Check header from client."""
-    header = header.split(' ')
+    header = header.split(' ', 4)
+
+    try:
+        method, uri, protocol, host = header
+
+    except ValueError:
+        raise SyntaxError
+    if method is not 'GET':
+        raise NameError
+    elif protocol[:9] is not 'HTTP/1.1':
+        raise ValueError
+    elif '127.0.0.1' not in host and str(PORT_NUMBER) not in host:
+        raise TypeError
+    return uri
 
 
 if __name__ == '__main__':
