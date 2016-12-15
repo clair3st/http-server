@@ -63,5 +63,10 @@ def response_error():
     return message
 
 
+def parse_request(header):
+    """Check header from client."""
+    header = header.split(' ')
+
+
 if __name__ == '__main__':
     server()
