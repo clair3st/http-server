@@ -32,14 +32,13 @@ def server():
                 part = conn.recv(BUFFER_LENGTH)
                 client_request += part.decode('utf8')
 
-            print(client_request)
+            print('Recieved request: ', client_request)
             try:
                 parse = parse_request(client_request)
-                try:
-                    response_body = resolve_uri(parse)
-                except IOError:
-                    conn.sendall(response_error('404'))
+                response_body = resolve_uri(parse)
                 conn.sendall(response_ok(response_body))
+            except IOError:
+                conn.sendall(response_error('404'))
             except SyntaxError:
                 conn.sendall(response_error('400'))
             except NameError:
@@ -82,25 +81,16 @@ def response_error(exception):
         message = exception + ' ' + error_codes[exception]
         if version_info[0] == 2:
             message = message.decode('utf-8')
-    message += u"\r\n"
+    message += u"\r\n\r\n"
     return message.encode('utf8')
 
 
 def parse_request(header):
     """Check header from client."""
-    # TODO: What if there's a body after?
     header = header.split(' ', 4)
-    print(header)
 
     try:
         method, uri, protocol, address, port = header
-        print("Method: " + method)
-        print(type(method))
-        print("uri: " + uri)
-        print("protocol: " + protocol)
-        print(protocol[:8])
-        print("address: " + address)
-        print("port: " + port)
 
     except ValueError:
         raise SyntaxError
@@ -114,7 +104,7 @@ def parse_request(header):
 
 
 def resolve_uri(parse_request):
-    """Take uri from parse_request, maps it to file type dict, returns tuple of content, filetype."""
+    """Uri from parse_request, returns tuple of content, filetype."""
     file_type_dict = {
         "txt": "text/plain",
         "html": "text/html",
@@ -123,8 +113,8 @@ def resolve_uri(parse_request):
         "jpeg": "image/jpeg",
         "py": "text/py",
     }
-
-    my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)), parse_request)
+    my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                          parse_request)
 
     if os.path.isfile(my_uri):
         file_type = parse_request.split('.')
@@ -136,13 +126,14 @@ def resolve_uri(parse_request):
     elif os.path.isdir(my_uri):
         return html_directory(my_uri)
     else:
-        raise IOError
+        raise IOError('raise IOError')
 
 
 def html_directory(my_uri):
-    """Take client request, if dir, and returns html links to dir and files within."""
+    """Take client request, if dir, returns html links to dir files within."""
     curr_directory = os.listdir(my_uri)
-    directory_list = ["<a src={0}>{0}</a>".format(item) for item in curr_directory]
+    directory_list = ["<a src={0}>{0}</a>".format(item)
+                      for item in curr_directory]
     html_string = " ".join(directory_list)
     return (html_string, "text/html")
 
