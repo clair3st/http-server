@@ -4,6 +4,8 @@
 from __future__ import unicode_literals
 from sys import version_info
 import socket
+BUFFER_LENGTH = 8
+ADDRESS, PORT = '127.0.0.1', 5017
 
 
 def server():
@@ -13,7 +15,7 @@ def server():
         socket.SOCK_STREAM,
         socket.IPPROTO_TCP
     )
-    address = ('127.0.0.1', 5017)
+    address = (ADDRESS, PORT)
     server.bind(address)
 
     server.listen(1)
@@ -23,24 +25,19 @@ def server():
 
     while True:
         try:
-            buffer_length = 8
-            client_request = u''
-            while client_request[-2:] != u"\r\n":
-                part = conn.recv(buffer_length)
-                client_request += part.decode('utf8')
+            client_request = b''
+            while client_request[-2:] != b"\r\n":
+                part = conn.recv(BUFFER_LENGTH)
+                client_request += part
 
-            print(client_request)
-            conn.sendall(response_ok().encode('utf8'))
-            conn.sendall(client_request.encode('utf8'))
+            conn.sendall(response_ok())
+            conn.sendall(client_request)
             conn, addr = server.accept()
 
         except KeyboardInterrupt:
             print('\nClosing echo server...')
             break
 
-        # except StandardError:
-        #     conn.sendall(server_bad_connection().encode('utf8'))
-        #     break
     conn.close()
     server.close()
 
@@ -50,7 +47,6 @@ def response_ok():
     message = 'HTTP/1.1 200 OK\n'
     if version_info[0] == 2:
         message = message.decode('utf-8')
-    message += u"\r\n"
     return message
 
 
