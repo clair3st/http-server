@@ -5,7 +5,7 @@ from sys import version_info
 import socket
 import os
 
-PORT_NUMBER = 5017
+PORT_NUMBER = 5019
 ADDRESS = '127.0.0.1'
 WEB_ROOT = './webroot'
 BUFFER_LENGTH = 8
@@ -29,14 +29,14 @@ def server():
     while True:
         try:
             client_request = u''
-            while client_request[-2:] != u"\r\n":
+            while client_request[-4:] != u"\r\n\r\n":
                 part = conn.recv(BUFFER_LENGTH)
                 client_request += part.decode('utf8')
 
             print(client_request)
             try:
-                parse_request(client_request)
-                conn.sendall(response_ok())
+                response_body = resolve_uri(parse_request(client_request))
+                conn.sendall(response_ok(response_body))
             except SyntaxError:
                 conn.sendall(response_error('400'))
             except NameError:
@@ -56,12 +56,13 @@ def server():
     server.close()
 
 
-def response_ok():
+def response_ok(response_body):
     """Send a HTTP response to client."""
     message = 'HTTP/1.1 200 OK\n'
+    message += 'Content-Type: ' + response_body[1] + '\r\n' + response_body[0]
     if version_info[0] == 2:
         message = message.decode('utf-8')
-    message += u"\r\n"
+    message += u"\r\n\r\n"
     return message.encode('utf8')
 
 
@@ -121,16 +122,25 @@ def resolve_uri(parse_request):
         # "/": "directory/html"
     }
 
-    if parse_request[-1] == "/":
-        "it's a directory"
-    file_type = parse_request.split('.')
-
     my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)), parse_request)
-    f = open(my_uri, 'r')
-    content = f.read()
-    file_type_tuple = (content, file_type_dict[file_type[-1]])
-    f.close()
-    return file_type_tuple
+
+    if '.' in parse_request:
+        file_type = parse_request.split('.')
+        f = open(my_uri, 'r')
+        content = f.read()
+        file_type_tuple = (content, file_type_dict[file_type[-1]])
+        f.close()
+        return file_type_tuple
+    else:
+        return html_directory(my_uri)
+
+
+def html_directory(my_uri):
+    """Take client request, if dir, and returns html links to dir and files within."""
+    curr_directory = os.listdir(my_uri)
+    directory_list = ["<a src={0}>{0}</a>".format(item) for item in curr_directory]
+    html_string = " ".join(directory_list)
+    return (html_string, "text/html")
 
 
 if __name__ == '__main__':

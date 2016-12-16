@@ -13,7 +13,7 @@ def client(message):
     client.connect(stream_info[-1])
     print("Connecting...")
 
-    message += '\r\n'
+    message += '\r\n\r\n'
 
     if version_info[0] == 2:
         print('python 2')
@@ -24,14 +24,14 @@ def client(message):
 
     result = u""
 
-    while result[-2:] != u"\r\n":
+    while result[-4:] != u"\r\n\r\n":
 
         part = client.recv(BUFFER_LENGTH)
         result += part.decode('utf8')
 
     client.close()
-    print(result[:-2])
-    return result[:-2]
+    print(result[:-4])
+    return result[:-4]
 
 
 def main():
