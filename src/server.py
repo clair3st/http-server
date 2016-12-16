@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from sys import version_info
 import socket
+import os
 
 PORT_NUMBER = 5017
 ADDRESS = '127.0.0.1'
@@ -109,7 +110,7 @@ def parse_request(header):
 
 
 def resolve_uri(parse_request):
-    """Takes uri from parse_request, maps it to file type dict, returns tuple of content, filetype."""
+    """Take uri from parse_request, maps it to file type dict, returns tuple of content, filetype."""
     file_type_dict = {
         "txt": "text/plain",
         "html": "text/html",
@@ -123,9 +124,12 @@ def resolve_uri(parse_request):
     if parse_request[-1] == "/":
         "it's a directory"
     file_type = parse_request.split('.')
-    content = open(parse_request, 'r')
+
+    my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)), parse_request)
+    f = open(my_uri, 'r')
+    content = f.read()
     file_type_tuple = (content, file_type_dict[file_type[-1]])
-    content.close()
+    f.close()
     return file_type_tuple
 
 
