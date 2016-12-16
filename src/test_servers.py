@@ -119,3 +119,10 @@ def test_resolve_uri_correct_files_returned(fname, body, content_type):
     """Check that resolve uri returns correct tuple of content and type."""
     from server import resolve_uri
     assert resolve_uri(fname) == (body, content_type)
+
+
+def test_resolve_uri_raises_error():
+    """Test if correct errors get raised for different headers."""
+    from server import resolve_uri
+    with pytest.raises(IOError):
+        resolve_uri('webroot/javascript.js')
