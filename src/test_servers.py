@@ -2,9 +2,10 @@
 """Test echo socket communication."""
 
 import pytest
+from server import PORT_NUMBER, ADDRESS
 # import sys
 
-HEADER = 'GET /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>'
+HEADER = 'GET /src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER)
 
 ECHO_MESSAGES = [
     'Yo',
@@ -13,15 +14,15 @@ ECHO_MESSAGES = [
 ]
 
 # CLIENT_MESSAGES = [
-#     ["GET /index.html HTTP/1.1<CRLF> Host: 127.0.0.1 5017<CRLF>",
+#     ['GET /index.html HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
 #      "HTTP/1.1 200 OK\n"],
-#     ['GET /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:80<CRLF><CRLF>',
+#     ['GET /src/server.py HTTP/1.1<CRLF> {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
 #      "404 Not Found\n"],
-#     ['PUT /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+#     ['PUT /src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
 #      "405 Method Not Allowed\n"],
-#     ['/src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+#     ['/src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
 #      "400 Bad Request\n"],
-#     ['GET /src/server.py HTTP/1.0<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+#     ['GET /src/server.py HTTP/1.0<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
 #      "505 HTTP Version Not Supported\n"],
 # ]
 
@@ -34,13 +35,13 @@ ERROR_CODES = [
 ]
 
 HEADER_ERRORS = [
-    ['GET /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:80<CRLF><CRLF>',
+    ['GET /src/server.py HTTP/1.1<CRLF> Host: {}:80<CRLF><CRLF>'.format(ADDRESS),
      TypeError],
-    ['PUT /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+    ['PUT /src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
      NameError],
-    ['/src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+    ['/src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
      SyntaxError],
-    ['GET /src/server.py HTTP/1.0<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+    ['GET /src/server.py HTTP/1.0<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
      ValueError],
 ]
 
@@ -71,7 +72,7 @@ It is three lines long.
 def test_response_ok():
     """Test good connection message from server returns correct string."""
     from server import response_ok
-    assert response_ok() == b'HTTP/1.1 200 OK\n\r\n'
+    assert response_ok(URI[0]) == b'HTTP/1.1 200 OK\nContent-Type: text/plain\r\nThis is a very simple text file.\nJust to show that we can serve it up.\nIt is three lines long.\n\r\n\r\n'
 
 
 @pytest.mark.parametrize("code, result", ERROR_CODES)

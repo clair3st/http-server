@@ -5,9 +5,8 @@ from sys import version_info
 import socket
 import os
 
-PORT_NUMBER = 5019
+PORT_NUMBER = 5024
 ADDRESS = '127.0.0.1'
-WEB_ROOT = './webroot'
 BUFFER_LENGTH = 8
 
 
@@ -35,7 +34,11 @@ def server():
 
             print(client_request)
             try:
-                response_body = resolve_uri(parse_request(client_request))
+                parse = parse_request(client_request)
+                try:
+                    response_body = resolve_uri(parse)
+                except IOError:
+                    conn.sendall(response_error('404'))
                 conn.sendall(response_ok(response_body))
             except SyntaxError:
                 conn.sendall(response_error('400'))
@@ -91,13 +94,13 @@ def parse_request(header):
 
     try:
         method, uri, protocol, address, port = header
-        # print("Method: " + method)
-        # print(type(method))
-        # print("uri: " + uri)
-        # print("protocol: " + protocol)
-        # print(protocol[:9])
-        # print("address: " + address)
-        # print("port: " + port)
+        print("Method: " + method)
+        print(type(method))
+        print("uri: " + uri)
+        print("protocol: " + protocol)
+        print(protocol[:8])
+        print("address: " + address)
+        print("port: " + port)
 
     except ValueError:
         raise SyntaxError
@@ -119,20 +122,21 @@ def resolve_uri(parse_request):
         "jpg": "image/jpg",
         "jpeg": "image/jpeg",
         "py": "text/py",
-        # "/": "directory/html"
     }
 
     my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)), parse_request)
 
-    if '.' in parse_request:
+    if os.path.isfile(my_uri):
         file_type = parse_request.split('.')
         f = open(my_uri, 'r')
         content = f.read()
         file_type_tuple = (content, file_type_dict[file_type[-1]])
         f.close()
         return file_type_tuple
-    else:
+    elif os.path.isdir(my_uri):
         return html_directory(my_uri)
+    else:
+        raise IOError
 
 
 def html_directory(my_uri):
