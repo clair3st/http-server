@@ -2,11 +2,11 @@
 
 import socket
 from sys import argv, version_info
-
+from server import PORT_NUMBER, ADDRESS, BUFFER_LENGTH
 
 def client(message):
     """Setup client side."""
-    infos = socket.getaddrinfo('127.0.0.1', 5017)
+    infos = socket.getaddrinfo(ADDRESS, PORT_NUMBER)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
 
     client = socket.socket(*stream_info[:3])
@@ -22,12 +22,11 @@ def client(message):
     print("Sending: ", message.encode('utf8'))
     client.sendall(message.encode('utf8'))
 
-    buffer_length = 8
     result = u""
 
     while result[-2:] != u"\r\n":
 
-        part = client.recv(buffer_length)
+        part = client.recv(BUFFER_LENGTH)
         result += part.decode('utf8')
 
     client.close()
@@ -40,7 +39,7 @@ def main():
     try:
         script, message = argv
         client(message)
-    except:
+    except ValueError:
         print('Oops, Something went wrong!')
 
 

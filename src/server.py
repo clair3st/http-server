@@ -5,6 +5,9 @@ from sys import version_info
 import socket
 
 PORT_NUMBER = 5017
+ADDRESS = '127.0.0.1'
+WEB_ROOT = './webroot'
+BUFFER_LENGTH = 8
 
 
 def server():
@@ -24,10 +27,9 @@ def server():
 
     while True:
         try:
-            buffer_length = 8
             client_request = u''
             while client_request[-2:] != u"\r\n":
-                part = conn.recv(buffer_length)
+                part = conn.recv(BUFFER_LENGTH)
                 client_request += part.decode('utf8')
 
             print(client_request)
@@ -104,6 +106,27 @@ def parse_request(header):
     elif '127.0.0.1' not in address and str(PORT_NUMBER) not in port:
         raise TypeError
     return uri
+
+
+def resolve_uri(parse_request):
+    """Takes uri from parse_request, maps it to file type dict, returns tuple of content, filetype."""
+    file_type_dict = {
+        "txt": "text/plain",
+        "html": "text/html",
+        "png": "image/png",
+        "jpg": "image/jpg",
+        "jpeg": "image/jpeg",
+        "py": "text/py",
+        # "/": "directory/html"
+    }
+
+    if parse_request[-1] == "/":
+        "it's a directory"
+    file_type = parse_request.split('.')
+    content = open(parse_request, 'r')
+    file_type_tuple = (content, file_type_dict[file_type[-1]])
+    content.close()
+    return file_type_tuple
 
 
 if __name__ == '__main__':
