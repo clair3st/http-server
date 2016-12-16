@@ -1,8 +1,8 @@
 # encoding:utf-8
 """Test echo socket communication."""
 
-# import pytest
-# import sys
+import pytest
+import sys
 
 
 PARAMS_TABLE = [
@@ -12,27 +12,27 @@ PARAMS_TABLE = [
 ]
 
 
-# @pytest.mark.parametrize("result", PARAMS_TABLE)
-# def test_message_completion(result):
-#     """Test table of potential messages for receipt and transmission."""
-#     from client import client
-#     assert client(result) == result
+@pytest.mark.parametrize("result", PARAMS_TABLE)
+def test_message_completion(result):
+    """Test table of potential messages for receipt and transmission."""
+    from client import client
+    assert client(result) == 'HTTP/1.1 200 OK\n' + result
 
 
-# def test_message_unicode():
-#     """Test for unicode messages."""
-#     from client import client
-#     msg = 'CÅT'
-#     if sys.version_info[0] == 2:
-#         assert client(msg) == msg.decode('utf8')
-#     else:
-#         assert client(msg) == msg
+def test_message_unicode():
+    """Test for unicode messages."""
+    from client import client
+    msg = 'CÅT'
+    if sys.version_info[0] == 2:
+        assert client(msg) == 'HTTP/1.1 200 OK\n' + msg.decode('utf8')
+    else:
+        assert client(msg) == 'HTTP/1.1 200 OK\n' + msg
 
 
 def test_response_ok():
     """Test good connection message from server returns correct string."""
     from server import response_ok
-    assert response_ok() == 'HTTP/1.1 200 OK\n\r\n'
+    assert response_ok() == 'HTTP/1.1 200 OK\n'
 
 
 def test_response_error():
