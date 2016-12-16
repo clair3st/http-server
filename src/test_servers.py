@@ -12,13 +12,18 @@ ECHO_MESSAGES = [
     'This has sixteen',
 ]
 
-CLIENT_MESSAGES = [
-    ["GET /index.html HTTP/1.1<CRLF> Host: 127.0.0.1 5017<CRLF>", "HTTP/1.1 200 OK\n"],
-    ['GET /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:80<CRLF><CRLF>', "404 Not Found\n"],
-    ['PUT /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>', "405 Method Not Allowed\n"],
-    ['/src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>', "400 Bad Request\n"],
-    ['GET /src/server.py HTTP/1.0<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>', "505 HTTP Version Not Supported\n"],
-]
+# CLIENT_MESSAGES = [
+#     ["GET /index.html HTTP/1.1<CRLF> Host: 127.0.0.1 5017<CRLF>",
+#      "HTTP/1.1 200 OK\n"],
+#     ['GET /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:80<CRLF><CRLF>',
+#      "404 Not Found\n"],
+#     ['PUT /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+#      "405 Method Not Allowed\n"],
+#     ['/src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+#      "400 Bad Request\n"],
+#     ['GET /src/server.py HTTP/1.0<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+#      "505 HTTP Version Not Supported\n"],
+# ]
 
 ERROR_CODES = [
     ['405', b'405 Method Not Allowed\n\r\n'],
@@ -29,10 +34,21 @@ ERROR_CODES = [
 ]
 
 HEADER_ERRORS = [
-    ['GET /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:80<CRLF><CRLF>', TypeError],
-    ['PUT /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>', NameError],
-    ['/src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>', SyntaxError],
-    ['GET /src/server.py HTTP/1.0<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>', ValueError],
+    ['GET /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:80<CRLF><CRLF>',
+     TypeError],
+    ['PUT /src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+     NameError],
+    ['/src/server.py HTTP/1.1<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+     SyntaxError],
+    ['GET /src/server.py HTTP/1.0<CRLF> Host: 127.0.0.1:5017<CRLF><CRLF>',
+     ValueError],
+]
+
+URI = [
+    ['''This is a very simple text file.
+Just to show that we can serve it up.
+It is three lines long.
+''', 'text/plain']
 ]
 
 # @pytest.mark.parametrize("result", ECHO_MESSAGES)
@@ -79,9 +95,15 @@ def test_parse_request_correct():
     assert parse_request(HEADER) == '/src/server.py'
 
 
-@pytest.mark.parametrize("message, result", CLIENT_MESSAGES)
-def test_server_loop(message, result):
-    """Test that server loop functions as expected."""
-    from client import client
-    assert client(message) == result
+# @pytest.mark.parametrize("message, result", CLIENT_MESSAGES)
+# def test_server_loop(message, result):
+#     """Test that server loop functions as expected."""
+#     from client import client
+#     assert client(message) == result
 
+
+@pytest.mark.parametrize("body, content", URI)
+def test_resolve_uri(body, content):
+    """Test resolve uri contains a tuple."""
+    from server import resolve_uri
+    assert resolve_uri('webroot/sample.txt') == (body, content)
