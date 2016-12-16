@@ -2,11 +2,12 @@
 
 import socket
 from sys import argv, version_info
+from server import BUFFER_LENGTH, ADDRESS, PORT
 
 
 def client(message):
     """Setup client side."""
-    infos = socket.getaddrinfo('127.0.0.1', 5017)
+    infos = socket.getaddrinfo(ADDRESS, PORT)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
 
     client = socket.socket(*stream_info[:3])
@@ -27,10 +28,11 @@ def client(message):
 
     while result[-2:] != u"\r\n":
 
-        part = client.recv(buffer_length)
+        part = client.recv(BUFFER_LENGTH)
         result += part.decode('utf8')
 
     client.close()
+
     print(result[:-2])
     return result[:-2]
 
