@@ -23,14 +23,14 @@ def server():
 
     while True:
         try:
-            response = u''
-            while response[-2:] != u"\r\n":
+            response = b''
+            while response[-2:] != b"\r\n":
                 part = conn.recv(BUFFER_LENGTH)
-                response += part.decode('utf8')
+                response += part
                 print('Recieved: ', part)
 
             print("Message sent...")
-            conn.sendall(response.encode('utf8'))
+            conn.sendall(response)
             conn, addr = server.accept()
 
         except KeyboardInterrupt:
