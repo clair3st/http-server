@@ -1,7 +1,9 @@
 # http-server
 This program builds an echo server. Ultimately, the client will send an HTTP request to the server, which will return an HTTP status response. 
 
-Our server.py has functions to forumulate these responses, which can be called in the main server() function- *response_ok()*, which returns a HTTP/1.1 200 OK status when called,.
+
+Our server.py has two functions to forumulate these responses, which can be called in the main server() function- *response_ok()*, which returns a HTTP/1.1 200 OK status when called, and *response_error()*, which returns a HTTP/1.1 500 Internal Server Error when called.
+
 
 ##Modules:
 1. client.py
@@ -36,5 +38,4 @@ TOTAL                    89     32    64%
 
 
 =============================================== 6 passed in 0.09 seconds 
-_______________________________________________________ summary ___________
 ```
