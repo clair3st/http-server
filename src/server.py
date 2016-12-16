@@ -118,7 +118,7 @@ def resolve_uri(parse_request):
 
     if os.path.isfile(my_uri):
         file_type = parse_request.split('.')
-        f = open(my_uri, 'r')
+        f = open(my_uri, 'rb')
         content = f.read()
         file_type_tuple = (content, file_type_dict[file_type[-1]])
         f.close()
