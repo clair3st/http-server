@@ -30,16 +30,17 @@ def client(message):
     print("Sending: ", message.encode('utf8'))
     client.sendall(message.encode('utf8'))
 
-    result = ""
+    result = []
 
-    while result[-2:] != u"\r\n":
+    while b"\r\n" not in b''.join(result):
 
-        part = client.recv(BUFFER_LENGTH)
-        result += part.decode('utf8')
+        result.append(client.recv(BUFFER_LENGTH))
+
+    result = b''.join(result)
 
     client.close()
-    print(result[:-2])
-    return result[:-2]
+    print(result[:-2].decode('utf8'))
+    return result[:-2].decode('utf8')
 
 
 def main():
