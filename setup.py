@@ -13,6 +13,6 @@ setup(
     package_dir={'': 'src'},
     py_modules=["linked_list"],
     extras_require={
-        "test": ["pytest", "pytest-cov", "tox"]
+        "test": ["pytest", "pytest-cov", "tox", "gevent"]
     }
 )
