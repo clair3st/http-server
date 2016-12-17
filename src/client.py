@@ -17,23 +17,21 @@ def client(message):
     message += '\r\n'
 
     if version_info[0] == 2:
-        print('python 2')
         message = message.decode("utf8")
 
     print("Sending: ", message.encode('utf8'))
     client.sendall(message.encode('utf8'))
 
-    buffer_length = 8
-    result = u""
+    result = []
 
-    while result[-2:] != u"\r\n":
+    while "\r\n" not in ''.join(result):
 
-        part = client.recv(BUFFER_LENGTH)
-        result += part.decode('utf8')
+        result.append(client.recv(BUFFER_LENGTH))
+
+    result = ''.join(result)
 
     client.close()
-
-    print(result[:-2])
+    print(result[:-2].decode('utf8'))
     return result[:-2]
 
 

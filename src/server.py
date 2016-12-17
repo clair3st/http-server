@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from sys import version_info
 import socket
 BUFFER_LENGTH = 8
-ADDRESS, PORT = '127.0.0.1', 5017
+ADDRESS, PORT = '127.0.0.1', 5004
 
 
 def server():
@@ -25,13 +25,13 @@ def server():
 
     while True:
         try:
-            client_request = b''
-            while client_request[-2:] != b"\r\n":
+            client_request = []
+            while b"\r\n" not in b''.join(client_request):
                 part = conn.recv(BUFFER_LENGTH)
-                client_request += part
+                client_request.append(part)
 
             conn.sendall(response_ok())
-            conn.sendall(client_request)
+            conn.sendall(b''.join(client_request))
             conn, addr = server.accept()
 
         except KeyboardInterrupt:
