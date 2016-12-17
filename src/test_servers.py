@@ -27,11 +27,11 @@ ECHO_MESSAGES = [
 # ]
 
 ERROR_CODES = [
-    ['405', b'405 Method Not Allowed\n\r\n'],
-    ['400', b'400 Bad Request\n\r\n'],
-    ['505', b'505 HTTP Version Not Supported\n\r\n'],
-    ['500', b'500 Internal Server Error\n\r\n'],
-    ['404', b'404 Not Found\n\r\n']
+    ['405', b'405 Method Not Allowed\n\r\n\r\n'],
+    ['400', b'400 Bad Request\n\r\n\r\n'],
+    ['505', b'505 HTTP Version Not Supported\n\r\n\r\n'],
+    ['500', b'500 Internal Server Error\n\r\n\r\n'],
+    ['404', b'404 Not Found\n\r\n\r\n']
 ]
 
 HEADER_ERRORS = [
@@ -52,6 +52,17 @@ It is three lines long.
 ''', 'text/plain']
 ]
 
+
+FILE_TABLE = [
+    ['webroot/sample.txt', b'''This is a very simple text file.
+Just to show that we can serve it up.
+It is three lines long.
+''', 'text/plain'],
+    ['webroot/a_web_page.html', b"""<!DOCTYPE html>\n<html>\n<body>\n\n<h1>Code Fellows</h1>\n\n<p>A fine place to learn Python web programming!</p>\n\n</body>\n</html>\n\n""", 'text/html'],
+    ['webroot/make_time.py', b'''#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n""" % time_str\n\nprint(html)\n''', 'text/py'],
+    ['webroot/images', '''<a src=JPEG_example.jpg>JPEG_example.jpg</a> <a src=sample_1.png>sample_1.png</a> <a src=Sample_Scene_Balls.jpg>Sample_Scene_Balls.jpg</a>''', 'text/html'],
+    # ['webroot/images/JPEG_example.jpg', """some binary/ byte string TBD""", 'image/jpg']
+]
 # @pytest.mark.parametrize("result", ECHO_MESSAGES)
 # def test_message_completion(result):
 #     """Test table of potential messages for receipt and transmission."""
@@ -103,8 +114,15 @@ def test_parse_request_correct():
 #     assert client(message) == result
 
 
-@pytest.mark.parametrize("body, content", URI)
-def test_resolve_uri(body, content):
-    """Test resolve uri contains a tuple."""
+@pytest.mark.parametrize("fname, body, content_type", FILE_TABLE)
+def test_resolve_uri_correct_files_returned(fname, body, content_type):
+    """Check that resolve uri returns correct tuple of content and type."""
     from server import resolve_uri
-    assert resolve_uri('webroot/sample.txt') == (body, content)
+    assert resolve_uri(fname) == (body, content_type)
+
+
+def test_resolve_uri_raises_error():
+    """Test if correct errors get raised for different headers."""
+    from server import resolve_uri
+    with pytest.raises(IOError):
+        resolve_uri('webroot/javascript.js')

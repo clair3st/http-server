@@ -1,5 +1,6 @@
 """Client side of server."""
 
+from __future__ import unicode_literals
 import socket
 from sys import argv, version_info
 from server import PORT_NUMBER, ADDRESS, BUFFER_LENGTH

@@ -6,7 +6,6 @@ import socket
 import mimetypes
 import os
 
-
 PORT_NUMBER = 5027
 ADDRESS = '127.0.0.1'
 BUFFER_LENGTH = 8
@@ -34,7 +33,7 @@ def server():
                 part = conn.recv(BUFFER_LENGTH)
                 client_request += part.decode('utf8')
 
-            print('Recieved request: ', client_request)
+            print('Received request: ', client_request)
             try:
                 parse = parse_request(client_request)
                 response_body = resolve_uri(parse)
