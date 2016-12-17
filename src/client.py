@@ -24,15 +24,15 @@ def client(message):
 
     result = []
 
-    while "\r\n" not in ''.join(result):
+    while b"\r\n" not in b''.join(result):
 
         result.append(client.recv(BUFFER_LENGTH))
 
-    result = ''.join(result)
+    result = b''.join(result)
 
     client.close()
     print(result[:-2].decode('utf8'))
-    return result[:-2]
+    return result[:-2].decode('utf8')
 
 
 def main():
