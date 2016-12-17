@@ -5,7 +5,7 @@ import pytest
 from server import PORT_NUMBER, ADDRESS
 # import sys
 
-HEADER = 'GET /src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER)
+HEADER = 'GET /src/server.py HTTP/1.1\r\n Host: {}:{}\r\n\r\n'.format(ADDRESS, PORT_NUMBER)
 
 ECHO_MESSAGES = [
     'Yo',
@@ -24,8 +24,7 @@ ECHO_MESSAGES = [
 #      "400 Bad Request\n"],
 #     ['GET /src/server.py HTTP/1.0<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
 #      "505 HTTP Version Not Supported\n"],
-# ]
-
+# ]r
 ERROR_CODES = [
     ['405', b'405 Method Not Allowed\n\r\n\r\n'],
     ['400', b'400 Bad Request\n\r\n\r\n'],
@@ -54,13 +53,13 @@ It is three lines long.
 
 
 FILE_TABLE = [
-    ['webroot/sample.txt', b'''This is a very simple text file.
+    ['/webroot/sample.txt', b'''This is a very simple text file.
 Just to show that we can serve it up.
 It is three lines long.
 ''', 'text/plain'],
-    ['webroot/a_web_page.html', b"""<!DOCTYPE html>\n<html>\n<body>\n\n<h1>Code Fellows</h1>\n\n<p>A fine place to learn Python web programming!</p>\n\n</body>\n</html>\n\n""", 'text/html'],
-    ['webroot/make_time.py', b'''#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n""" % time_str\n\nprint(html)\n''', 'text/x-python'],
-    ['webroot/images', '''<a src=JPEG_example.jpg>JPEG_example.jpg</a> <a src=sample_1.png>sample_1.png</a> <a src=Sample_Scene_Balls.jpg>Sample_Scene_Balls.jpg</a>''', 'text/html'],
+    ['/webroot/a_web_page.html', b"""<!DOCTYPE html>\n<html>\n<body>\n\n<h1>Code Fellows</h1>\n\n<p>A fine place to learn Python web programming!</p>\n\n</body>\n</html>\n\n""", 'text/html'],
+    ['/webroot/make_time.py', b'''#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n""" % time_str\n\nprint(html)\n''', 'text/x-python'],
+    ['/webroot/images', '''<a src=JPEG_example.jpg>JPEG_example.jpg</a> <a src=sample_1.png>sample_1.png</a> <a src=Sample_Scene_Balls.jpg>Sample_Scene_Balls.jpg</a>''', 'text/html'],
     # ['webroot/images/JPEG_example.jpg', """some binary/ byte string TBD""", 'image/jpg']
 ]
 # @pytest.mark.parametrize("result", ECHO_MESSAGES)
