@@ -3,9 +3,11 @@
 from __future__ import unicode_literals
 from sys import version_info
 import socket
+import mimetypes
 import os
 
-PORT_NUMBER = 5024
+
+PORT_NUMBER = 5027
 ADDRESS = '127.0.0.1'
 BUFFER_LENGTH = 8
 
@@ -60,12 +62,15 @@ def server():
 
 def response_ok(response_body):
     """Send a HTTP response to client."""
-    message = 'HTTP/1.1 200 OK\n'
-    message += 'Content-Type: ' + response_body[1] + '\r\n' + response_body[0]
-    if version_info[0] == 2:
-        message = message.decode('utf-8')
-    message += u"\r\n\r\n"
-    return message.encode('utf8')
+    print('Im in response ok')
+    message = b'HTTP/1.1 200 OK\n'
+    message += b'Content-Type: ' + response_body[1].encode('utf8') + b'\r\n' + response_body[0]
+    # if version_info[0] == 2:
+    # message = message.decode('utf-8')
+    message += b"\r\n\r\n"
+    # return message.encode('utf8')
+    print('finished response ok')
+    return message
 
 
 def response_error(exception):
@@ -105,24 +110,23 @@ def parse_request(header):
 
 def resolve_uri(parse_request):
     """Uri from parse_request, returns tuple of content, filetype."""
-    file_type_dict = {
-        "txt": "text/plain",
-        "html": "text/html",
-        "png": "image/png",
-        "jpg": "image/jpg",
-        "jpeg": "image/jpeg",
-        "py": "text/py",
-    }
     my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                           parse_request)
 
     if os.path.isfile(my_uri):
-        file_type = parse_request.split('.')
-        f = open(my_uri, 'r')
-        content = f.read()
-        file_type_tuple = (content, file_type_dict[file_type[-1]])
+        if 'text' in mimetypes.guess_type(my_uri)[0]:
+            print('it has text')
+            f = open(my_uri, 'r')
+            content = f.read()
+            content = content.encode('utf8')
+        else:
+            print('else, must read as binary')
+            with open(my_uri, 'rb') as f:
+                content = f.read()
+        file_type_tuple = (content, mimetypes.guess_type(my_uri)[0])
         f.close()
         return file_type_tuple
+
     elif os.path.isdir(my_uri):
         return html_directory(my_uri)
     else:
