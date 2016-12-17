@@ -17,22 +17,22 @@ ECHO_MESSAGES = [
 ]
 
 CLIENT_MESSAGES = [
-    ['GET /src/server.py HTTP/1.1<\r\n> {}:{}<\r\n><\r\n>'.format(
+    ['GET /src/server.py HTTP/1.1\r\n {}:{}\r\n\r\n'.format(
         ADDRESS,
         PORT_NUMBER
     ),
         "404 Not Found\n"],
-    ['PUT /src/server.py HTTP/1.1<\r\n> Host: {}:{}<\r\n><\r\n>'.format(
+    ['PUT /src/server.py HTTP/1.1\r\n Host: {}:{}\r\n\r\n'.format(
         ADDRESS,
         PORT_NUMBER
     ),
         "405 Method Not Allowed\n"],
-    ['/src/server.py HTTP/1.1<\r\n> Host: {}:{}<\r\n><\r\n>'.format(
+    ['/src/server.py HTTP/1.1\r\n Host: {}:{}\r\n\r\n'.format(
         ADDRESS,
         PORT_NUMBER
     ),
         "400 Bad Request\n"],
-    ['GET /src/server.py HTTP/1.0<\r\n> Host: {}:{}<\r\n><\r\n>'.format(
+    ['GET /src/server.py HTTP/1.0\r\n Host: {}:{}\r\n\r\n'.format(
         ADDRESS,
         PORT_NUMBER
     ),
@@ -89,7 +89,7 @@ It is three lines long.
 def test_response_ok():
     """Test good connection message from server returns correct string."""
     from server import response_ok
-    assert response_ok(URI[0]) == b'HTTP/1.1 200 OK\nContent-Type: text/plain\r\nThis is a very simple text file.\nJust to show that we can serve it up.\nIt is three lines long.\n\r\n\r\n'
+    assert response_ok(URI[0]) == b'HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 95\n\r\nThis is a very simple text file.\nJust to show that we can serve it up.\nIt is three lines long.\n\r\n\r\n'
 
 
 @pytest.mark.parametrize("code, result", ERROR_CODES)

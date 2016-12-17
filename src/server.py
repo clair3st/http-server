@@ -6,7 +6,8 @@ import socket
 import mimetypes
 import os
 
-PORT_NUMBER = 5030
+
+PORT_NUMBER = 5034
 ADDRESS = '127.0.0.1'
 BUFFER_LENGTH = 8
 
@@ -39,8 +40,8 @@ def server():
                 response_body = resolve_uri(parse)
                 conn.sendall(response_ok(response_body))
             except IOError:
+                print('IOERROR')
                 conn.sendall(response_error('404'))
-                print('IOError')
             except SyntaxError:
                 conn.sendall(response_error('400'))
             except NameError:
@@ -64,9 +65,11 @@ def response_ok(response_body):
     """Send a HTTP response to client."""
     print('Im in response ok')
     message = b'HTTP/1.1 200 OK\n'
-    message += b'Content-Type: ' + response_body[1].encode('utf8') + b'\r\n' + response_body[0].encode('utf8')
+    message += b'Content-Type: ' + response_body[1].encode('utf8') + b'\n'
+    message += b'Content-Length: ' + str(len(response_body[0])).encode('utf8') + b'\n'
+    message += b'\r\n' + response_body[0].encode('utf8')
     message += b"\r\n\r\n"
-    print('finished response ok')
+    print('finished response ok', message, type(message))
     return message
 
 
@@ -91,8 +94,6 @@ def parse_request(header):
     """Check header from client."""
     header = header.split('\r\n')[:2]
 
-    print('header:', header)
-    print('header:', header[:4])
     try:
         method, uri, protocol = header[0].split(' ')
 
@@ -110,18 +111,14 @@ def parse_request(header):
 def resolve_uri(parse_request):
     """Uri from parse_request, returns tuple of content, filetype."""
     parse_request = parse_request[1:]
-    print(parse_request)
     my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                           parse_request)
-    print(my_uri)
     if os.path.isfile(my_uri):
         if 'text' in mimetypes.guess_type(my_uri)[0]:
-            print('it has text')
             f = open(my_uri, 'r')
             content = f.read()
             content = content.encode('utf8')
         else:
-            print('else, must read as binary')
             with open(my_uri, 'rb') as f:
                 content = f.read()
         file_type_tuple = (content, mimetypes.guess_type(my_uri)[0])
