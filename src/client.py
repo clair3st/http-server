@@ -4,6 +4,7 @@ import socket
 from sys import argv, version_info
 from server import PORT_NUMBER, ADDRESS, BUFFER_LENGTH
 
+
 def client(message):
     """Setup client side."""
     infos = socket.getaddrinfo(ADDRESS, PORT_NUMBER)
@@ -22,13 +23,15 @@ def client(message):
     print("Sending: ", message.encode('utf8'))
     client.sendall(message.encode('utf8'))
 
-    result = u""
+    result = []
 
-    while result[-4:] != u"\r\n\r\n":
+    while b"\r\n\r\n" not in b''.join(result):
 
-        part = client.recv(BUFFER_LENGTH)
-        result += part.decode('utf8')
+        result.append(client.recv(BUFFER_LENGTH))
 
+    result = b''.join(result)
+    if b'text' in result:
+        result = result.decode('utf8')
     client.close()
     print(result[:-4])
     return result[:-4]
@@ -36,11 +39,11 @@ def client(message):
 
 def main():
     """Function initiates our echo server."""
-    try:
-        script, message = argv
-        client(message)
-    except ValueError:
-        print('Oops, Something went wrong!')
+    # try:
+    script, message = argv
+    client(message)
+    # except ValueError:
+    #     print('Oops, Something went wrong!')
 
 
 if __name__ == '__main__':
