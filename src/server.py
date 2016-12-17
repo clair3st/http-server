@@ -3,8 +3,9 @@
 from __future__ import unicode_literals
 from sys import version_info
 import socket
-
-PORT_NUMBER = 5017
+ADDRESS = '127.0.0.1'
+PORT = 5017
+BUFFER_LENGTH = 8
 
 
 def server():
@@ -14,7 +15,7 @@ def server():
         socket.SOCK_STREAM,
         socket.IPPROTO_TCP
     )
-    address = ('127.0.0.1', PORT_NUMBER)
+    address = (ADDRESS, PORT)
     server.bind(address)
 
     server.listen(1)
@@ -24,13 +25,13 @@ def server():
 
     while True:
         try:
-            buffer_length = 8
-            client_request = u''
-            while client_request[-2:] != u"\r\n":
-                part = conn.recv(buffer_length)
-                client_request += part.decode('utf8')
+            client_request = []
+            while b"\r\n" not in b''.join(client_request):
+                part = conn.recv(BUFFER_LENGTH)
+                client_request.append(part)
 
-            print(client_request)
+            client_request = ''.join(client_request)
+            client_request = client_request.decode('utf8')
             try:
                 parse_request(client_request)
                 conn.sendall(response_ok())
@@ -81,19 +82,10 @@ def response_error(exception):
 
 def parse_request(header):
     """Check header from client."""
-    # TODO: What if there's a body after?
     header = header.split(' ', 4)
-    print(header)
 
     try:
         method, uri, protocol, address, port = header
-        # print("Method: " + method)
-        # print(type(method))
-        # print("uri: " + uri)
-        # print("protocol: " + protocol)
-        # print(protocol[:9])
-        # print("address: " + address)
-        # print("port: " + port)
 
     except ValueError:
         raise SyntaxError
@@ -101,7 +93,7 @@ def parse_request(header):
         raise NameError
     elif protocol[:8] != 'HTTP/1.1':
         raise ValueError
-    elif '127.0.0.1' not in address and str(PORT_NUMBER) not in port:
+    elif '127.0.0.1' not in address and str(PORT) not in port:
         raise TypeError
     return uri
 
