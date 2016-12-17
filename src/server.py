@@ -63,11 +63,8 @@ def response_ok(response_body):
     """Send a HTTP response to client."""
     print('Im in response ok')
     message = b'HTTP/1.1 200 OK\n'
-    message += b'Content-Type: ' + response_body[1].encode('utf8') + b'\r\n' + response_body[0]
-    # if version_info[0] == 2:
-    # message = message.decode('utf-8')
+    message += b'Content-Type: ' + response_body[1].encode('utf8') + b'\r\n' + response_body[0].encode('utf8')
     message += b"\r\n\r\n"
-    # return message.encode('utf8')
     print('finished response ok')
     return message
 
