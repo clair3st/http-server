@@ -14,14 +14,13 @@ def client(message):
     client = socket.socket(*stream_info[:3])
     client.connect(stream_info[-1])
     print("Connecting...")
-
-    message += '\r\n\r\n'
+    message = message.replace('<CRLF>', '\r\n')
 
     if version_info[0] == 2:
         print('python 2')
         message = message.decode("utf8")
 
-    print("Sending: ", message.encode('utf8'))
+    print("Sending: ", message)
     client.sendall(message.encode('utf8'))
 
     result = []
