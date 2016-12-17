@@ -59,7 +59,7 @@ Just to show that we can serve it up.
 It is three lines long.
 ''', 'text/plain'],
     ['webroot/a_web_page.html', b"""<!DOCTYPE html>\n<html>\n<body>\n\n<h1>Code Fellows</h1>\n\n<p>A fine place to learn Python web programming!</p>\n\n</body>\n</html>\n\n""", 'text/html'],
-    ['webroot/make_time.py', b'''#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n""" % time_str\n\nprint(html)\n''', 'text/py'],
+    ['webroot/make_time.py', b'''#!/usr/bin/env python\n\n"""\nmake_time.py\n\nsimple script that returns and HTML page with the current time\n"""\n\nimport datetime\n\ntime_str = datetime.datetime.now().isoformat()\n\nhtml = """\n<http>\n<body>\n<h2> The time is: </h2>\n<p> %s <p>\n</body>\n</http>\n""" % time_str\n\nprint(html)\n''', 'text/x-python'],
     ['webroot/images', '''<a src=JPEG_example.jpg>JPEG_example.jpg</a> <a src=sample_1.png>sample_1.png</a> <a src=Sample_Scene_Balls.jpg>Sample_Scene_Balls.jpg</a>''', 'text/html'],
     # ['webroot/images/JPEG_example.jpg', """some binary/ byte string TBD""", 'image/jpg']
 ]
