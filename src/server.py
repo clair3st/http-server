@@ -102,7 +102,7 @@ def parse_request(header):
         raise NameError
     elif protocol[:8] != 'HTTP/1.1':
         raise ValueError
-    elif '127.0.0.1' not in header[-1] and str(PORT_NUMBER) not in header[-1]:
+    elif '127.0.0.1' not in header[-1] or str(PORT_NUMBER) not in header[-1]:
         raise TypeError
     return uri
 
