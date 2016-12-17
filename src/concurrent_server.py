@@ -1,4 +1,4 @@
-"""functions to build the server side of echo."""
+"""Server to run concurrently with server.py."""
 
 from __future__ import unicode_literals
 from sys import version_info
@@ -6,58 +6,46 @@ import socket
 import mimetypes
 import os
 
-PORT_NUMBER = 5030
-ADDRESS = '127.0.0.1'
-BUFFER_LENGTH = 8
+from server import ADDRESS
+
+PORT_NUMBER = 5500
+BUFFER_LENGTH = 1024
 
 
-def server():
-    """Set up the server side to listen."""
-    server = socket.socket(
-        socket.AF_INET,
-        socket.SOCK_STREAM,
-        socket.IPPROTO_TCP
-    )
-    address = (ADDRESS, PORT_NUMBER)
-    server.bind(address)
+def server(socket, address):
+    """Set up a concurrent socket server."""
 
-    server.listen(1)
     print("Listening...")
-
-    conn, addr = server.accept()
 
     while True:
         try:
             client_request = u''
             while client_request[-4:] != u"\r\n\r\n":
-                part = conn.recv(BUFFER_LENGTH)
+                part = socket.recv(BUFFER_LENGTH)
                 client_request += part.decode('utf8')
 
             print('Received request: ', client_request)
             try:
                 parse = parse_request(client_request)
                 response_body = resolve_uri(parse)
-                conn.sendall(response_ok(response_body))
+                socket.sendall(response_ok(response_body))
             except IOError:
-                conn.sendall(response_error('404'))
+                socket.sendall(response_error('404'))
                 print('IOError')
             except SyntaxError:
-                conn.sendall(response_error('400'))
+                socket.sendall(response_error('400'))
             except NameError:
-                conn.sendall(response_error('405'))
+                socket.sendall(response_error('405'))
             except ValueError:
-                conn.sendall(response_error('505'))
+                socket.sendall(response_error('505'))
             except TypeError:
-                conn.sendall(response_error('404'))
-
-            conn, addr = server.accept()
+                socket.sendall(response_error('404'))
 
         except KeyboardInterrupt:
             print('\nClosing echo server...')
             break
 
-    conn.close()
-    server.close()
+    socket.close()
 
 
 def response_ok(response_body):
@@ -144,4 +132,9 @@ def html_directory(my_uri):
 
 
 if __name__ == '__main__':
-    server()
+    from gevent.server import StreamServer
+    from gevent.monkey import patch_all
+    patch_all()
+    server = StreamServer((ADDRESS, PORT_NUMBER), server)
+    print("Starting concurrency server now... ")
+    server.serve_forever()
