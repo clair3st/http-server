@@ -6,7 +6,7 @@ import socket
 import mimetypes
 import os
 
-PORT_NUMBER = 5027
+PORT_NUMBER = 5029
 ADDRESS = '127.0.0.1'
 BUFFER_LENGTH = 8
 
@@ -18,7 +18,7 @@ def server():
         socket.SOCK_STREAM,
         socket.IPPROTO_TCP
     )
-    address = ('127.0.0.1', PORT_NUMBER)
+    address = (ADDRESS, PORT_NUMBER)
     server.bind(address)
 
     server.listen(1)
@@ -40,6 +40,7 @@ def server():
                 conn.sendall(response_ok(response_body))
             except IOError:
                 conn.sendall(response_error('404'))
+                print('IOError')
             except SyntaxError:
                 conn.sendall(response_error('400'))
             except NameError:
@@ -91,10 +92,12 @@ def response_error(exception):
 
 def parse_request(header):
     """Check header from client."""
-    header = header.split(' ', 4)
+    header = header.split('\r\n')[:2]
 
+    print('header:', header)
+    print('header:', header[:4])
     try:
-        method, uri, protocol, address, port = header
+        method, uri, protocol = header[0].split(' ')
 
     except ValueError:
         raise SyntaxError
@@ -102,16 +105,18 @@ def parse_request(header):
         raise NameError
     elif protocol[:8] != 'HTTP/1.1':
         raise ValueError
-    elif '127.0.0.1' not in address and str(PORT_NUMBER) not in port:
+    elif '127.0.0.1' not in header[-1] and str(PORT_NUMBER) not in header[-1]:
         raise TypeError
     return uri
 
 
 def resolve_uri(parse_request):
     """Uri from parse_request, returns tuple of content, filetype."""
+    parse_request = parse_request[1:]
+    print(parse_request)
     my_uri = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                           parse_request)
-
+    print(my_uri)
     if os.path.isfile(my_uri):
         if 'text' in mimetypes.guess_type(my_uri)[0]:
             print('it has text')
