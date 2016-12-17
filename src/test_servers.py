@@ -35,13 +35,13 @@ ERROR_CODES = [
 ]
 
 HEADER_ERRORS = [
-    ['GET /src/server.py HTTP/1.1<CRLF> Host: {}:80<CRLF><CRLF>'.format(ADDRESS),
+    ['GET /src/server.py HTTP/1.1\r\n Host: {}:80<\r\n><\r\n>'.format(ADDRESS),
      TypeError],
-    ['PUT /src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
+    ['PUT /src/server.py HTTP/1.1\r\n Host: {}:{}<\r\n><\r\n>'.format(ADDRESS, PORT_NUMBER),
      NameError],
-    ['/src/server.py HTTP/1.1<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
+    ['/src/server.py HTTP/1.1<\r\n> Host: {}:{}<\r\n><\r\n>'.format(ADDRESS, PORT_NUMBER),
      SyntaxError],
-    ['GET /src/server.py HTTP/1.0<CRLF> Host: {}:{}<CRLF><CRLF>'.format(ADDRESS, PORT_NUMBER),
+    ['GET /src/server.py HTTP/1.0<\r\n> Host: {}:{}<\r\n><\r\n>'.format(ADDRESS, PORT_NUMBER),
      ValueError],
 ]
 
