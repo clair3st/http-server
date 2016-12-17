@@ -40,11 +40,11 @@ def client(message):
 
 def main():
     """Function initiates our echo server."""
-    # try:
-    script, message = argv
-    client(message)
-    # except ValueError:
-    #     print('Oops, Something went wrong!')
+    try:
+        script, message = argv
+        client(message)
+    except ValueError:
+        print('Oops, Something went wrong!')
 
 
 if __name__ == '__main__':
