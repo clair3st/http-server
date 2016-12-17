@@ -23,14 +23,12 @@ def server():
 
     while True:
         try:
-            response = b''
-            while response[-2:] != b"\r\n":
+            response = []
+            while b"\r\n" not in b''.join(response):
                 part = conn.recv(BUFFER_LENGTH)
-                response += part
-                print('Recieved: ', part)
+                response.append(part)
 
-            print("Message sent...")
-            conn.sendall(response)
+            conn.sendall(b''.join(response))
             conn, addr = server.accept()
 
         except KeyboardInterrupt:
