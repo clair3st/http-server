@@ -7,7 +7,7 @@ import mimetypes
 import os
 
 
-PORT_NUMBER = 5034
+PORT_NUMBER = 5035
 ADDRESS = '127.0.0.1'
 BUFFER_LENGTH = 8
 
@@ -54,7 +54,7 @@ def server():
             conn, addr = server.accept()
 
         except KeyboardInterrupt:
-            print('\nClosing echo server...')
+            print('\nClosing http server...')
             break
 
     conn.close()
@@ -63,13 +63,11 @@ def server():
 
 def response_ok(response_body):
     """Send a HTTP response to client."""
-    print('Im in response ok')
     message = b'HTTP/1.1 200 OK\n'
     message += b'Content-Type: ' + response_body[1].encode('utf8') + b'\n'
     message += b'Content-Length: ' + str(len(response_body[0])).encode('utf8') + b'\n'
-    message += b'\r\n' + response_body[0].encode('utf8')
-    message += b"\r\n\r\n"
-    print('finished response ok', message, type(message))
+    message += b'\r\n' + response_body[0]
+    message += b'\r\n\r\n'
     return message
 
 
@@ -134,10 +132,10 @@ def resolve_uri(parse_request):
 def html_directory(my_uri):
     """Take client request, if dir, returns html links to dir files within."""
     curr_directory = os.listdir(my_uri)
-    directory_list = ["<a src={0}>{0}</a>".format(item)
+    directory_list = ["<h1>{}</h1>".format(item)
                       for item in curr_directory]
-    html_string = " ".join(directory_list)
-    return (html_string, "text/html")
+    html_string = "<!DOCTYPE html>\n<html>\n" + " ".join(directory_list) + "\n</html>"
+    return (html_string, "html/text")
 
 
 if __name__ == '__main__':
