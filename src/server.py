@@ -6,7 +6,7 @@ import socket
 import mimetypes
 import os
 
-PORT_NUMBER = 5034
+PORT_NUMBER = 5036
 ADDRESS = '127.0.0.1'
 BUFFER_LENGTH = 8
 
@@ -133,9 +133,10 @@ def resolve_uri(parse_request):
 def html_directory(my_uri):
     """Take client request, if dir, returns html links to dir files within."""
     curr_directory = os.listdir(my_uri)
-    directory_list = ["<a src={0}>{0}</a>".format(item)
+    directory_list = ["\n<a src='{0}'>{0}</a>\n".format(item)
                       for item in curr_directory]
-    html_string = " ".join(directory_list)
+    html = " ".join(directory_list)
+    html_string = "<!DOCTYPE html>\n<html>\n{}</html>".format(html)
     return (html_string, "text/html")
 
 
