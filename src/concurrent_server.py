@@ -6,6 +6,9 @@ from server import response_ok, resolve_uri, parse_request, response_error
 
 from server import ADDRESS
 
+from gevent.server import StreamServer
+from gevent.monkey import patch_all
+
 PORT_NUMBER = 5500
 BUFFER_LENGTH = 1024
 
@@ -19,12 +22,14 @@ def server(socket, address):
             client_request = u''
             while client_request[-4:] != u"\r\n\r\n":
                 part = socket.recv(BUFFER_LENGTH)
+                # print(part)
                 client_request += part.decode('utf8')
 
             print('Received request: ', client_request)
             try:
                 parse = parse_request(client_request)
                 response_body = resolve_uri(parse)
+                print('this is concurrent', response_body)
                 socket.sendall(response_ok(response_body))
             except IOError:
                 socket.sendall(response_error('404'))
@@ -46,8 +51,6 @@ def server(socket, address):
 
 
 if __name__ == '__main__':
-    from gevent.server import StreamServer
-    from gevent.monkey import patch_all
     patch_all()
     server = StreamServer((ADDRESS, PORT_NUMBER), server)
     print("Starting concurrency server now... ")
